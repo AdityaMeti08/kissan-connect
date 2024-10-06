@@ -58,6 +58,7 @@ import { initializeApp } from "firebase/app";
 import { GoogleAuthProvider, getAuth, signInWithPopup, UserCredential } from "firebase/auth";
 
 import "./App.css";
+import { json } from "stream/consumers";
 
 
 // IMP START - SDK Initialization
@@ -134,15 +135,23 @@ function App() {
 
   useEffect(() => {
     const init = async () => {
+      const storedProvider = localStorage.getItem("provider");
+
       try {
         await web3auth.init();
-        setProvider(web3auth.provider);
 
-        if (web3auth.status === ADAPTER_EVENTS.CONNECTED) {
+        if (storedProvider) {
+          setProvider(web3auth.provider);  // Reinitialize provider from storage
+          setLoggedIn(true);
+        } else if (web3auth.status === ADAPTER_EVENTS.CONNECTED) {
+          setProvider(web3auth.provider);
           setLoggedIn(true);
         }
+        await getAccounts();  // Fetch public key
+        await getBalance();   // Fetch balance
+  
       } catch (error) {
-        console.error(error);
+        console.error("Failed to initialize Web3Auth", error);
       }
     };
 
@@ -164,31 +173,31 @@ function App() {
 
 
   const login = async () => {
-    if (!web3auth) {
-      return;
-    }
-    // login with firebase
-    const loginRes = await signInWithGoogle();
-    // get the id token from firebase
-    const idToken = await loginRes.user.getIdToken(true);
-    const { payload } = decodeToken(idToken);
+    const auth = getAuth(app);
+    const googleProvider = new GoogleAuthProvider();
 
-    const web3authProvider = await web3auth.connect({
-      verifier,
-      verifierId: (payload as any).sub,
-      idToken,
-    });
+    try {
+      const res = await signInWithPopup(auth, googleProvider);
+      const idToken = await res.user.getIdToken(true);
+      const { payload } = decodeToken(idToken);
 
-    if (web3authProvider) {
-      setLoggedIn(true);
-      setProvider(web3authProvider);
+      const web3authProvider = await web3auth.connect({
+        verifier,
+        verifierId: (payload as any).sub,
+        idToken,
+      });
+
+      if (web3authProvider) {
+        setLoggedIn(true);
+        setProvider(web3authProvider);
+
+        // Store provider in localStorage for persistence
+        localStorage.setItem("provider", JSON.stringify(web3authProvider));
+      }
+    } catch (err) {
+      console.error("Login failed", err);
     }
   };
-  const arweave = Arweave.init({
-    host: 'arweave.net',
-    port: 443,
-    protocol: 'https',
-  });
 
   const getUserInfo = async () => {
     const user = await web3auth.getUserInfo();
@@ -199,6 +208,7 @@ function App() {
 		}
 		const publicKey = await web3auth?.provider?.request({method: 'solanaPublicKey',});
     setAddress(String(publicKey));
+    localStorage.setItem("address",("0x"+String(publicKey)));
   };
 
   const getBalance = async () => {
@@ -219,6 +229,7 @@ function App() {
 		// Fetch the balance for the specified public key
 		const balance = await connection.getBalance(new PublicKey(accounts[0]));
     setBalance(balance/LAMPORTS_PER_SOL);
+    localStorage.setItem("Balance",JSON.stringify(balance));
   };
   const get_aidrop = async () => {
     if (!provider) {
@@ -257,6 +268,9 @@ function App() {
     await web3auth.logout();
     setProvider(null);
     setLoggedIn(false);
+    localStorage.removeItem("provider");
+    localStorage.removeItem("balance");
+    localStorage.removeItem("address");
   };
 
 
@@ -297,7 +311,7 @@ function App() {
   );
 
   const unloggedInView = (
-    <button onClick={login} className="card">
+    <button onClick={login} id="login-btn">
       Login
     </button>
   );

@@ -88,5 +88,32 @@
 	  padding: 10px;
 	  position: relative; /* Sidebar shifts to the bottom on smaller screens */
 	}
+
+	.card{
+		position: relative;
+	}
+  }
+
+  .login-btn {
+	background-color: #28a745;  /* Green background */
+	color: white;               /* White text color */
+	padding: 12px 20px;         /* Padding for button size */
+	border: none;               /* No border */
+	border-radius: 5px;         /* Rounded corners */
+	font-size: 1rem;            /* Font size */
+	cursor: pointer;            /* Pointer cursor on hover */
+	transition: background-color 0.3s ease;  /* Smooth hover transition */
   }
   
+  .login-btn:hover {
+	background-color: #218838;  /* Darker green on hover */
+  }
+  
+  .login-btn:focus {
+	outline: none;              /* Removes default outline on focus */
+	box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);  /* Adds subtle focus shadow */
+  }
+  
+  .login-btn:active {
+	background-color: #1e7e34;  /* Even darker green when clicked */
+  }
