@@ -7,6 +7,32 @@ import { createUmi } from '@metaplex-foundation/umi-bundle-defaults'
 import { createGenericFile, createSignerFromKeypair, generateSigner, keypairIdentity, percentAmount, sol } from '@metaplex-foundation/umi';
 import { mockStorage } from '@metaplex-foundation/umi-storage-mock';
 import * as fs from 'fs';
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+} from "react-router-dom";
+import Layout from "./pages/Layout";
+import Home from "./pages/Home";
+import Blogs from "./pages/Blogs";
+import Contact from "./pages/Contact";
+import {
+  Card,
+  Typography,
+  List,
+  ListItem,
+  ListItemPrefix,
+  ListItemSuffix,
+  Chip,
+} from "@material-tailwind/react";
+import {
+  PresentationChartBarIcon,
+  ShoppingBagIcon,
+  UserCircleIcon,
+  Cog6ToothIcon,
+  InboxIcon,
+  PowerIcon,
+} from "@heroicons/react/24/solid";
 
 // IMP START - Quick Start
 import { Web3Auth, decodeToken } from "@web3auth/single-factor-auth";
@@ -32,6 +58,7 @@ import { initializeApp } from "firebase/app";
 import { GoogleAuthProvider, getAuth, signInWithPopup, UserCredential } from "firebase/auth";
 
 import "./App.css";
+
 
 // IMP START - SDK Initialization
 // IMP START - Dashboard Registration
@@ -76,11 +103,11 @@ const firebaseConfig = {
 };
 // IMP END - Auth Provider Login
 
-
 function App() {
   const [provider, setProvider] = useState<IProvider | null>(null);
   const [loggedIn, setLoggedIn] = useState(false);
-
+  const [balance, setBalance] = useState(0);  // Add state for balance
+  const [address,setAddress]=useState("");
   const [images, setImages] = React.useState([]);
   const maxNumber = 69;
   const nftDetail = {
@@ -138,7 +165,6 @@ function App() {
 
   const login = async () => {
     if (!web3auth) {
-      uiConsole("web3auth initialised yet");
       return;
     }
     // login with firebase
@@ -166,20 +192,17 @@ function App() {
 
   const getUserInfo = async () => {
     const user = await web3auth.getUserInfo();
-    uiConsole(user);
   };
   const getAccounts = async () => {
 		if (!web3auth) {
-			uiConsole('web3auth not initialized yet');
 			return;
 		}
-		const privateKey = await web3auth?.provider?.request({method: 'solanaPublicKey',});
-		uiConsole(privateKey);
+		const publicKey = await web3auth?.provider?.request({method: 'solanaPublicKey',});
+    setAddress(String(publicKey));
   };
 
   const getBalance = async () => {
 		if (!provider) {
-			uiConsole('provider not initialized yet');
 			return;
 		}
 		const solanaWallet = new SolanaWallet(provider);
@@ -195,11 +218,10 @@ function App() {
 
 		// Fetch the balance for the specified public key
 		const balance = await connection.getBalance(new PublicKey(accounts[0]));
-		uiConsole(balance / 1000000000);
+    setBalance(balance/LAMPORTS_PER_SOL);
   };
   const get_aidrop = async () => {
     if (!provider) {
-      uiConsole('Provider not initialized yet');
       return;
     }
   
@@ -226,99 +248,50 @@ function App() {
       );
   
       await connection.confirmTransaction(fromAirDropSignature);
-      uiConsole(`Airdrop of ${solValue} SOL successful`);
     } catch (error) {
       console.error('Airdrop failed', error);
-      uiConsole('Airdrop failed', error);
     }
   };
   
-  const signMessage = async () => {
-    if (!provider) {
-      uiConsole("provider not initialized yet");
-      return;
-    }
-    const web3 = new Web3(provider as any);
-
-    // Get user's Ethereum public address
-    const fromAddress = (await web3.eth.getAccounts())[0];
-
-    const originalMessage = "YOUR_MESSAGE";
-
-    // Sign the message
-    const signedMessage = await web3.eth.personal.sign(
-      originalMessage,
-      fromAddress,
-      "test password!" // configure your own password here.
-    );
-    uiConsole(signedMessage);
-  };
   const logout = async () => {
     await web3auth.logout();
     setProvider(null);
     setLoggedIn(false);
-    uiConsole("logged out");
   };
 
 
-  function uiConsole(...args: any[]): void {
-    const el = document.querySelector("#console>p");
-    if (el) {
-      el.innerHTML = JSON.stringify(args || {}, null, 2);
-    }
-    console.log(...args);
-  }
+
 
   const loggedInView = (
     <>
       <div className="flex-container">
         <div>
-          <button onClick={logout} className="card">Log Out</button>
-          <button onClick={getUserInfo} className="card">Get User Info</button>
-          <button onClick={getAccounts} className="card">Get Public Key</button>
-          <button onClick={get_aidrop} className="card">Get Airdrop</button>
-          <button onClick={getBalance} className="card">Get Balance</button>
-          <button onClick={signMessage} className="card">Sign Message</button>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Layout />}>
+            <Route index element={<Home />} />
+            <Route path="blogs" element={<Blogs />} />
+            <Route path="contact" element={<Contact />} />
+            </Route>
+          </Routes>
+        </BrowserRouter>
         </div>
-        <ImageUploading
-        multiple
-        value={images}
-        onChange={onChange}
-        maxNumber={maxNumber}
-        dataURLKey="data_url"
-      >
-        {({
-          imageList,
-          onImageUpload,
-          onImageRemoveAll,
-          onImageUpdate,
-          onImageRemove,
-          isDragging,
-          dragProps,
-        }) => (
-          // write your building UI
-          <div className="upload__image-wrapper">
-            <button
-              style={isDragging ? { color: 'red' } : undefined}
-              onClick={onImageUpload}
-              {...dragProps}
-            >
-              Click or Drop here
-            </button>
-            &nbsp;
-            <button onClick={onImageRemoveAll}>Remove all images</button>
-            {imageList.map((image, index) => (
-              <div key={index} className="image-item">
-                <img src={image['data_url']} alt="" width="100" />
-                <div className="image-item__btn-wrapper">
-                  <button onClick={() => onImageUpdate(index)}>Update</button>
-                  <button onClick={() => onImageRemove(index)}>Remove</button>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </ImageUploading>
+        <div>
+        <div className="sidebar">
+        <button onClick={logout} className="sidebar-item">Log Out</button>
+        <button onClick={getUserInfo} className="sidebar-item">Get User Info</button>
+        <button onClick={get_aidrop} className="sidebar-item">Get Airdrop</button>
+        <div className="balance-container">
+        <button onClick={getBalance} className="sidebar-item">Get Balance</button>
+          {balance !== null && <span className="balance-display">Balance: {balance} SOL</span>}
+        </div>
+        <div className="balance-container">
+        <button onClick={getAccounts} className="sidebar-item">Get Public Key</button>
+          {balance !== null && <span className="balance-display">Address: {"0x"+address}</span>}
+        </div>
+        </div>
+        </div>
+        
     </div>
     </>
   );
@@ -332,19 +305,16 @@ function App() {
   return (
     <div className="container">
       <h1 className="title">
-        <a target="_blank" href="https://web3auth.io/docs/sdk/core-kit/sfa-web" rel="noreferrer">
+        <a target="_blank" rel="noreferrer">
         Kissanconnect
         </a>{" "}
       </h1>
 
       <div className="grid">{loggedIn ? loggedInView : unloggedInView}</div>
-      <div id="console" style={{ whiteSpace: "pre-line" }}>
-        <p style={{ whiteSpace: "pre-line" }}></p>
-      </div>
-      
 
     </div>
   );
 }
+
 
 export default App;
