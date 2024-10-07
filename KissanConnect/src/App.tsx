@@ -7,6 +7,8 @@ import { createUmi } from '@metaplex-foundation/umi-bundle-defaults'
 import { createGenericFile, createSignerFromKeypair, generateSigner, keypairIdentity, percentAmount, sol } from '@metaplex-foundation/umi';
 import { mockStorage } from '@metaplex-foundation/umi-storage-mock';
 import * as fs from 'fs';
+import backgroundimage from "./pexels-kelly-1179532-2321837.jpg";
+import { Outlet, Link } from "react-router-dom";
 import {
   BrowserRouter,
   Routes,
@@ -16,6 +18,7 @@ import Layout from "./pages/Layout";
 import Home from "./pages/Home";
 import Blogs from "./pages/Blogs";
 import Contact from "./pages/Contact";
+import User from "./pages/user";
 import {
   Card,
   Typography,
@@ -59,6 +62,9 @@ import { GoogleAuthProvider, getAuth, signInWithPopup, UserCredential } from "fi
 
 import "./App.css";
 
+import Container from 'react-bootstrap/Container';
+import Nav from 'react-bootstrap/Nav';
+import NavDropdown from 'react-bootstrap/NavDropdown';
 
 // IMP START - SDK Initialization
 // IMP START - Dashboard Registration
@@ -79,6 +85,18 @@ const chainConfig = {
   tickerName: "Solana",
 };
 
+function Navbar() {
+  return (
+    <nav className="navbar">
+      <ul className="navbar-links">
+        <li><Link to="/">Home</Link></li>
+        <li><Link to="/blogs">Blogs</Link></li>
+        <li><Link to="/contact">Contact</Link></li>
+        <li><Link to="/user">User</Link></li>
+      </ul>
+    </nav>
+  );
+}
 const privateKeyProvider = new SolanaPrivateKeyProvider({
   config: { chainConfig },
 });
@@ -183,6 +201,8 @@ function App() {
       setLoggedIn(true);
       setProvider(web3authProvider);
     }
+    await getBalance();
+    await getAccounts();
   };
   const arweave = Arweave.init({
     host: 'arweave.net',
@@ -199,6 +219,7 @@ function App() {
 		}
 		const publicKey = await web3auth?.provider?.request({method: 'solanaPublicKey',});
     setAddress(String(publicKey));
+    localStorage.setItem("address","0x"+String(publicKey));
   };
 
   const getBalance = async () => {
@@ -219,6 +240,7 @@ function App() {
 		// Fetch the balance for the specified public key
 		const balance = await connection.getBalance(new PublicKey(accounts[0]));
     setBalance(balance/LAMPORTS_PER_SOL);
+    localStorage.setItem("balance",String(balance));
   };
   const get_aidrop = async () => {
     if (!provider) {
@@ -267,14 +289,16 @@ function App() {
       <div className="flex-container">
         <div>
         <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Layout />}>
-            <Route index element={<Home />} />
-            <Route path="blogs" element={<Blogs />} />
-            <Route path="contact" element={<Contact />} />
-            </Route>
-          </Routes>
-        </BrowserRouter>
+      <Navbar />
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route index element={<Home />} />
+          <Route path="blogs" element={<Blogs />} />
+          <Route path="contact" element={<Contact />} />
+          <Route path="user" element={<User />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
         </div>
         <div>
         <div className="sidebar">
@@ -290,16 +314,18 @@ function App() {
           {balance !== null && <span className="balance-display">Address: {"0x"+address}</span>}
         </div>
         </div>
-        </div>
-        
+        </div>    
     </div>
     </>
   );
 
   const unloggedInView = (
-    <button onClick={login} className="card">
+    <body>
+    <h1 className="center-text">KISK</h1>
+    <button  onClick={login} className="card" id="login-btn">
       Login
     </button>
+    </body>
   );
 
   return (
