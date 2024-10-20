@@ -19,6 +19,8 @@ import Home from "./pages/Home";
 import Blogs from "./pages/Blogs";
 import Contact from "./pages/Contact";
 import User from "./pages/user";
+import  AddProducts  from "./pages/addproduct";
+import { chainConfig } from "./pages/config/config.js";
 import {
   Card,
   Typography,
@@ -65,25 +67,16 @@ import "./App.css";
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import NavDropdown from 'react-bootstrap/NavDropdown';
-
+import { clientId } from "./pages/config/config.js";
 // IMP START - SDK Initialization
 // IMP START - Dashboard Registration
-const clientId = "BKtu5x05Fhgwz4v5c_4f9BzrqO91VSu4zHrGJtycdeAKKTfSTYJGdchI2v5V9PFl5miqR-mXsU8HzNg00CeVsX4"; // get from https://dashboard.web3auth.io
 // IMP END - Dashboard Registration
 
 // IMP START - Verifier Creation
 const verifier = "authenticator";
 // IMP END - Verifier Creation
 
-const chainConfig = {
-  chainNamespace: CHAIN_NAMESPACES.SOLANA,
-  chainId: "0x1",
-  rpcTarget: "https://api.devnet.solana.com",
-  displayName: "Solana Mainnet",
-  blockExplorerUrl: "https://explorer.solana.com/",
-  ticker: "SOL",
-  tickerName: "Solana",
-};
+
 
 function Navbar() {
   return (
@@ -93,6 +86,7 @@ function Navbar() {
         <li><Link to="/blogs">Blogs</Link></li>
         <li><Link to="/contact">Contact</Link></li>
         <li><Link to="/user">User</Link></li>
+        <li><Link to="/AddProducts">AddProduct</Link></li>
       </ul>
     </nav>
   );
@@ -120,18 +114,6 @@ function App() {
   const [balance, setBalance] = useState(0);  // Add state for balance
   const [address,setAddress]=useState("");
   const [images, setImages] = React.useState([]);
-  const maxNumber = 69;
-  const nftDetail = {
-    name: "QuickNode Pixel",
-    symbol: "QP",
-    uri: "IPFS_URL_OF_METADATA",
-    royalties: 5.5,
-    description: 'Pixel infrastructure for everyone!',
-    imgType: 'image/png',
-    attributes: [
-        { trait_type: 'Speed', value: 'Quick' },
-    ]
-};
 
 
   // Firebase Initialisation
@@ -288,6 +270,7 @@ function App() {
           <Route path="blogs" element={<Blogs />} />
           <Route path="contact" element={<Contact />} />
           <Route path="user" element={<User />} />
+          <Route path="Add product" element={<AddProducts />} />
         </Route>
       </Routes>
     </BrowserRouter>
