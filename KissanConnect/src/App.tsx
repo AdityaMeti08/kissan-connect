@@ -36,7 +36,7 @@ import {
   InboxIcon,
   PowerIcon,
 } from "@heroicons/react/24/solid";
-
+import {app} from "./pages/config/config.js";
 // IMP START - Quick Start
 import { Web3Auth, decodeToken } from "@web3auth/single-factor-auth";
 import { ADAPTER_EVENTS, CHAIN_NAMESPACES, IProvider, WEB3AUTH_NETWORK } from "@web3auth/base";
@@ -111,14 +111,7 @@ const web3auth = new Web3Auth({
 
 // IMP START - Auth Provider Login
 // Your web app's Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyApSz11Fy1G1-RKHSrLdQ_OP68TrZr5Z5U",
-  authDomain: "kissan-connect-33f10.firebaseapp.com",
-  projectId: "kissan-connect-33f10",
-  storageBucket: "kissan-connect-33f10.appspot.com",
-  messagingSenderId: "745440975310",
-  appId: "1:745440975310:android:016d39b3dfa765d69af39f",
-};
+
 // IMP END - Auth Provider Login
 
 function App() {
@@ -142,7 +135,6 @@ function App() {
 
 
   // Firebase Initialisation
-  const app = initializeApp(firebaseConfig);
   const onChange = (imageList:any , addUpdateIndex:any ) => {
     // data for submit
     console.log(imageList, addUpdateIndex);
