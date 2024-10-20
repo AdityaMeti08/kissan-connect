@@ -5,6 +5,7 @@ import 'firebase/compat/firestore';
 const firebaseConfig = {
     apiKey: "AIzaSyApSz11Fy1G1-RKHSrLdQ_OP68TrZr5Z5U",
     authDomain: "kissan-connect-33f10.firebaseapp.com",
+    databaseURL:"https://kissan-connect-33f10-default-rtdb.asia-southeast1.firebasedatabase.app/",
     projectId: "kissan-connect-33f10",
     storageBucket: "kissan-connect-33f10.appspot.com",
     messagingSenderId: "745440975310",
