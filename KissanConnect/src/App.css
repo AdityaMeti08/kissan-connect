@@ -1,6 +1,6 @@
 /* General Styles */
 body {
-	background-image: url(https://images.pexels.com/photos/2321837/pexels-photo-2321837.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2);
+	background-image: url();
 }
 
 .container {
@@ -158,5 +158,28 @@ body {
   .navbar-links a:hover {
 	background-color: #575757;
 	border-radius: 5px;
+  }
+  
+  .store {
+	padding: 20px;
+  }
+  
+  .product-grid {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 20px;
+  }
+  
+  .product-card {
+	border: 1px solid #ddd;
+	border-radius: 8px;
+	padding: 10px;
+	width: 200px;
+	text-align: center;
+  }
+  
+  .product-image {
+	width: 100%;
+	height: auto;
   }
   

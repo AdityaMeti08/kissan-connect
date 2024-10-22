@@ -16,10 +16,8 @@ import {
 } from "react-router-dom";
 import Layout from "./pages/Layout";
 import Home from "./pages/Home";
-import Blogs from "./pages/Blogs";
 import Contact from "./pages/Contact";
 import User from "./pages/user";
-import  AddProducts  from "./pages/addproduct";
 import { chainConfig } from "./pages/config/config.js";
 import {
   Card,
@@ -68,6 +66,7 @@ import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import { clientId } from "./pages/config/config.js";
+import Blogs from "./pages/Addproduct";
 // IMP START - SDK Initialization
 // IMP START - Dashboard Registration
 // IMP END - Dashboard Registration
@@ -83,10 +82,9 @@ function Navbar() {
     <nav className="navbar">
       <ul className="navbar-links">
         <li><Link to="/">Home</Link></li>
-        <li><Link to="/blogs">Blogs</Link></li>
+        <li><Link to="/blogs">Add a product here</Link></li>
         <li><Link to="/contact">Contact</Link></li>
         <li><Link to="/user">User</Link></li>
-        <li><Link to="/AddProducts">AddProduct</Link></li>
       </ul>
     </nav>
   );
@@ -270,7 +268,6 @@ function App() {
           <Route path="blogs" element={<Blogs />} />
           <Route path="contact" element={<Contact />} />
           <Route path="user" element={<User />} />
-          <Route path="Add product" element={<AddProducts />} />
         </Route>
       </Routes>
     </BrowserRouter>
