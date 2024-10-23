@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
-import { collection, getDocs } from 'firebase/firestore'; // Firestore functions
-import { db } from './config/config'; // Adjust the path as necessary
+import { useNavigate } from 'react-router-dom';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from './config/config';
+import { useCart } from './CartContext'; // Import the cart context
 
 // Define the Product interface
 interface Product {
@@ -12,23 +14,24 @@ interface Product {
 }
 
 const Home = () => {
-  // Declare the state for products with the Product[] type
-  const [products, setProducts] = useState<Product[]>([]); // Initialize products as an array of Product objects
-  const [loading, setLoading] = useState(true); // State for loading
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate(); // Hook to navigate between pages
+  const { dispatch } = useCart(); // Access the dispatch function from the cart context
 
   // Function to fetch products from Firestore
   const fetchProducts = async () => {
     try {
-      const querySnapshot = await getDocs(collection(db, 'products')); // Fetch products from 'products' collection
+      const querySnapshot = await getDocs(collection(db, 'products'));
       const productsData: Product[] = querySnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
-      })) as Product[]; // Cast to Product[]
-      setProducts(productsData); // Set the fetched products in state
-      setLoading(false); // Set loading to false after fetching
+      })) as Product[];
+      setProducts(productsData);
+      setLoading(false);
     } catch (err) {
       console.error('Error fetching products:', err);
-      setLoading(false); // Set loading to false even if there's an error
+      setLoading(false);
     }
   };
 
@@ -37,23 +40,30 @@ const Home = () => {
     fetchProducts();
   }, []);
 
+  // Handle adding product to the cart
+  const handleAddToCart = (product: Product) => {
+    dispatch({ type: 'ADD_TO_CART', product }); // Dispatch action to add product to cart
+  };
+
   if (loading) {
     return <p>Loading...</p>; // Display a loading message while fetching
   }
+
   return (
     <div className="store">
       <h1>Store</h1>
       <div className="product-grid">
-        {/* Map through the products and display each one */}
         {products.map((product) => (
           <div key={product.id} className="product-card">
             <img src={product.imageUrl} alt={product.productName} className="product-image" />
             <h2>{product.productName}</h2>
             <p>{product.description}</p>
             <p>Price: ${product.price}</p>
+            <button onClick={() => handleAddToCart(product)}>Add to Cart</button> {/* Add to Cart Button */}
           </div>
         ))}
       </div>
+      <button onClick={() => navigate('/cart')}>Go to Cart</button> {/* Navigate to Cart Button */}
     </div>
   );
 };

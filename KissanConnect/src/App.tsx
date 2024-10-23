@@ -66,7 +66,10 @@ import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import { clientId } from "./pages/config/config.js";
+import Checkout from "./pages/checkout";
 import Blogs from "./pages/Addproduct";
+import Cart from "./pages/Cart";
+import { CartProvider } from "./pages/CartContext";
 // IMP START - SDK Initialization
 // IMP START - Dashboard Registration
 // IMP END - Dashboard Registration
@@ -262,14 +265,19 @@ function App() {
         <div>
         <BrowserRouter>
       <Navbar />
+      <CartProvider>
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
           <Route path="blogs" element={<Blogs />} />
           <Route path="contact" element={<Contact />} />
           <Route path="user" element={<User />} />
+          <Route path="/checkout" element={<Checkout />} />  {/* Checkout page */}
+          <Route path="/cart" element={<Cart />} />  {/* Cart page */}
+
         </Route>
       </Routes>
+      </CartProvider>
     </BrowserRouter>
         </div>
         <div>
