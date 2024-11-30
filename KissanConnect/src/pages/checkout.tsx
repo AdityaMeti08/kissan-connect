@@ -5,7 +5,7 @@ const Checkout = () => {
   const { state } = useCart(); // Access the cart context
 
   const calculateTotal = () => {
-    return state.cart.reduce((total, product) => total + product.price, 0).toFixed(2); // Calculate total price
+    return state.cart.reduce((total, product) => total + product.price, 0); // Calculate total price
   };
 
   return (
@@ -21,7 +21,7 @@ const Checkout = () => {
               <div>
                 <h2>{product.productName}</h2>
                 <p>{product.description}</p>
-                <p>Price: ${product.price.toFixed(2)}</p>
+                <p>Price: ${product.price}</p>
               </div>
             </div>
           ))}
