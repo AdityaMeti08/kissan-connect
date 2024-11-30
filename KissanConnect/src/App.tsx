@@ -70,6 +70,8 @@ import Checkout from "./pages/checkout";
 import Blogs from "./pages/Addproduct";
 import Cart from "./pages/Cart";
 import { CartProvider } from "./pages/CartContext";
+
+import { createMint, getOrCreateAssociatedTokenAccount, mintTo, setAuthority, transfer } from  "@solana/spl-token";
 // IMP START - SDK Initialization
 // IMP START - Dashboard Registration
 // IMP END - Dashboard Registration
@@ -108,14 +110,54 @@ const web3auth = new Web3Auth({
 // Your web app's Firebase configuration
 
 // IMP END - Auth Provider Login
+async function mintNFt(){
+  const provider=web3auth.provider;
+  const solanaWallet = new SolanaWallet(provider!);
 
+  const accounts = await solanaWallet.requestAccounts();
+
+  // Request connection configuration
+  const connectionConfig: any = await solanaWallet.request({
+    method: "solana_provider_config",
+    params: [],
+  });
+
+  // Create a new connection using the RPC target from the config
+  const connection = new Connection(connectionConfig.rpcTarget);
+
+  // Fetch the balance for the first account (public key)
+  const balance = await connection.getBalance(new PublicKey(accounts[0]));
+  if (balance === 0) {
+    throw new Error("Insufficient balance: Balance is zero");
+  }
+
+  // Proceed with NFT minting logic
+  console.log("Minting NFT...");
+  // Add your minting logic here
+  const pubKey = await solanaWallet.requestAccounts();
+  const { blockhash } = await connection.getLatestBlockhash("finalized");
+  
+  const TransactionInstruction = SystemProgram.transfer({
+    fromPubkey: new PublicKey(pubKey[0]),
+    toPubkey: new PublicKey(pubKey[0]),
+    lamports: 0.01 * LAMPORTS_PER_SOL,
+  });
+
+  const transaction = new Transaction({
+    recentBlockhash: blockhash,
+    feePayer: new PublicKey(pubKey[0]),
+  }).add(TransactionInstruction);
+  
+  const signedTx = await solanaWallet.signTransaction(transaction);
+  console.log(signedTx);
+}
 function App() {
   const [provider, setProvider] = useState<IProvider | null>(null);
   const [loggedIn, setLoggedIn] = useState(false);
   const [balance, setBalance] = useState(0);  // Add state for balance
   const [address,setAddress]=useState("");
   const [images, setImages] = React.useState([]);
-
+  const [private_key,set_private_key]=useState("");
 
   // Firebase Initialisation
   const onChange = (imageList:any , addUpdateIndex:any ) => {
@@ -195,10 +237,11 @@ function App() {
 		const publicKey = await web3auth?.provider?.request({method: 'solanaPublicKey',});
     setAddress(String(publicKey));
     localStorage.setItem("address","0x"+String(publicKey));
+
   };
 
   const getBalance = async () => {
-		if (!provider) {
+    if (!provider) {
 			return;
 		}
 		const solanaWallet = new SolanaWallet(provider);
@@ -321,6 +364,5 @@ function App() {
     </div>
   );
 }
-
-
+export { web3auth,mintNFt};
 export default App;

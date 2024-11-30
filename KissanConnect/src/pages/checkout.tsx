@@ -1,13 +1,29 @@
 import { useCart } from './CartContext';
-import '../App.css'; // Import the CSS file
-
+import '../App.css'; 
+import bs58 from 'bs58';
+import { getED25519Key } from "@web3auth/auth-adapter";
+import { chainConfig } from './config/config';
+import {
+  Connection,
+  LAMPORTS_PER_SOL,
+  PublicKey,
+  SystemProgram,
+  Transaction,
+} from "@solana/web3.js";
+import {
+	SolanaPrivateKeyProvider,
+	SolanaWallet,
+} from '@web3auth/solana-provider';
+import { WEB3AUTH_NETWORK } from "@web3auth/base";
+import { Web3Auth, decodeToken } from "@web3auth/single-factor-auth";
+import { web3auth} from '../App';
+import { mintNFt } from '../App';
 const Checkout = () => {
-  const { state } = useCart(); // Access the cart context
+  const { state } = useCart(); 
 
   const calculateTotal = () => {
-    return state.cart.reduce((total, product) => total + product.price, 0); // Calculate total price
+    return state.cart.reduce((total, product) => total + product.price, 0); 
   };
-
   return (
     <div className="checkout-container">
       <h1 className="checkout-header">Checkout</h1>
@@ -26,7 +42,8 @@ const Checkout = () => {
             </div>
           ))}
           <div className="checkout-total">Total: ${calculateTotal()}</div>
-          <button className="proceed-button">Proceed to Payment</button>
+          <button className="proceed-button" onClick={mintNFt}>Proceed to Payment and mint the NFT's</button>
+          
         </div>
       )}
     </div>
