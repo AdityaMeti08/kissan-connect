@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import React from 'react';
 import ReactDOM from "react-dom";
 import Arweave from "arweave";
-import { createNft, mplTokenMetadata } from '@metaplex-foundation/mpl-token-metadata'
+import { createNft,mplTokenMetadata } from '@metaplex-foundation/mpl-token-metadata'
 import { createUmi } from '@metaplex-foundation/umi-bundle-defaults'
 import { createGenericFile, createSignerFromKeypair, generateSigner, keypairIdentity, percentAmount, sol } from '@metaplex-foundation/umi';
 import { mockStorage } from '@metaplex-foundation/umi-storage-mock';
@@ -54,6 +54,7 @@ import {
 	PublicKey,
 	SystemProgram,
 	Transaction,
+  clusterApiUrl,
 } from '@solana/web3.js';
 
 // Firebase libraries for custom authentication
@@ -70,7 +71,6 @@ import Checkout from "./pages/checkout";
 import Blogs from "./pages/Addproduct";
 import Cart from "./pages/Cart";
 import { CartProvider } from "./pages/CartContext";
-
 import { createMint, getOrCreateAssociatedTokenAccount, mintTo, setAuthority, transfer } from  "@solana/spl-token";
 // IMP START - SDK Initialization
 // IMP START - Dashboard Registration
@@ -112,10 +112,11 @@ const web3auth = new Web3Auth({
 // IMP END - Auth Provider Login
 async function mintNFt(){
   const provider=web3auth.provider;
+
+  const umi = createUmi(clusterApiUrl("devnet"));
   const solanaWallet = new SolanaWallet(provider!);
 
   const accounts = await solanaWallet.requestAccounts();
-
   // Request connection configuration
   const connectionConfig: any = await solanaWallet.request({
     method: "solana_provider_config",
@@ -125,32 +126,37 @@ async function mintNFt(){
   // Create a new connection using the RPC target from the config
   const connection = new Connection(connectionConfig.rpcTarget);
 
+
   // Fetch the balance for the first account (public key)
   const balance = await connection.getBalance(new PublicKey(accounts[0]));
   if (balance === 0) {
     throw new Error("Insufficient balance: Balance is zero");
   }
-
-  // Proceed with NFT minting logic
-  console.log("Minting NFT...");
-  // Add your minting logic here
   const pubKey = await solanaWallet.requestAccounts();
   const { blockhash } = await connection.getLatestBlockhash("finalized");
-  
-  const TransactionInstruction = SystemProgram.transfer({
-    fromPubkey: new PublicKey(pubKey[0]),
-    toPubkey: new PublicKey(pubKey[0]),
-    lamports: 0.01 * LAMPORTS_PER_SOL,
-  });
+  console.log("Keypair loaded. Public key:", pubKey);
 
-  const transaction = new Transaction({
-    recentBlockhash: blockhash,
-    feePayer: new PublicKey(pubKey[0]),
-  }).add(TransactionInstruction);
-  
-  const signedTx = await solanaWallet.signTransaction(transaction);
-  console.log(signedTx);
+  console.log("Generating new mint address...");
+  const mint = generateSigner(umi);
+  console.log("Creating NFT...");
+  const { signature } = await createNft(umi, {
+    mint,
+    name: "My NFT",
+    // Replace this with your Arweave metadata URI
+    uri: "https://ffaaqinzhkt4ukhbohixfliubnvpjgyedi3f2iccrq4efh3s.arweave.net/KUAIIbk6p8oo4XHRcq0U__C2r0mwQaNl0gQow4Qp9yk",
+    sellerFeeBasisPoints: percentAmount(0),
+  }).sendAndConfirm(umi);
+
+  /*
+  console.log("NFT created successfully!");
+  console.log("Mint address:", mint.publicKey);
+  console.log("Transaction signature:", signature);
+  console.log("Fetching digital asset...");
+  */
+
 }
+
+
 function App() {
   const [provider, setProvider] = useState<IProvider | null>(null);
   const [loggedIn, setLoggedIn] = useState(false);
