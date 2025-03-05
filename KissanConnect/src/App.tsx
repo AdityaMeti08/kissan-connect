@@ -9,6 +9,7 @@ import { mockStorage } from '@metaplex-foundation/umi-storage-mock';
 import * as fs from 'fs';
 import backgroundimage from "./pexels-kelly-1179532-2321837.jpg";
 import { Outlet, Link } from "react-router-dom";
+
 import {
   BrowserRouter,
   Routes,
@@ -112,11 +113,10 @@ const web3auth = new Web3Auth({
 // IMP END - Auth Provider Login
 async function mintNFt(){
   const provider=web3auth.provider;
-
-  const umi = createUmi(clusterApiUrl("devnet"));
   const solanaWallet = new SolanaWallet(provider!);
 
   const accounts = await solanaWallet.requestAccounts();
+
   // Request connection configuration
   const connectionConfig: any = await solanaWallet.request({
     method: "solana_provider_config",
@@ -126,36 +126,32 @@ async function mintNFt(){
   // Create a new connection using the RPC target from the config
   const connection = new Connection(connectionConfig.rpcTarget);
 
-
   // Fetch the balance for the first account (public key)
   const balance = await connection.getBalance(new PublicKey(accounts[0]));
   if (balance === 0) {
     throw new Error("Insufficient balance: Balance is zero");
   }
+
+  // Proceed with NFT minting logic
+  console.log("Minting NFT...");
+  // Add your minting logic here
   const pubKey = await solanaWallet.requestAccounts();
   const { blockhash } = await connection.getLatestBlockhash("finalized");
-  console.log("Keypair loaded. Public key:", pubKey);
+  
+  const TransactionInstruction = SystemProgram.transfer({
+    fromPubkey: new PublicKey(pubKey[0]),
+    toPubkey: new PublicKey(pubKey[0]),
+    lamports: 0.01 * LAMPORTS_PER_SOL,
+  });
 
-  console.log("Generating new mint address...");
-  const mint = generateSigner(umi);
-  console.log("Creating NFT...");
-  const { signature } = await createNft(umi, {
-    mint,
-    name: "My NFT",
-    // Replace this with your Arweave metadata URI
-    uri: "https://ffaaqinzhkt4ukhbohixfliubnvpjgyedi3f2iccrq4efh3s.arweave.net/KUAIIbk6p8oo4XHRcq0U__C2r0mwQaNl0gQow4Qp9yk",
-    sellerFeeBasisPoints: percentAmount(0),
-  }).sendAndConfirm(umi);
-
-  /*
-  console.log("NFT created successfully!");
-  console.log("Mint address:", mint.publicKey);
-  console.log("Transaction signature:", signature);
-  console.log("Fetching digital asset...");
-  */
-
+  const transaction = new Transaction({
+    recentBlockhash: blockhash,
+    feePayer: new PublicKey(pubKey[0]),
+  }).add(TransactionInstruction);
+  
+  const signedTx = await solanaWallet.signTransaction(transaction);
+  console.log(signedTx);
 }
-
 
 function App() {
   const [provider, setProvider] = useState<IProvider | null>(null);
