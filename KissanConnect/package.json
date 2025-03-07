@@ -75,5 +75,9 @@
     "test": "react-app-rewired test",
     "eject": "react-scripts eject",
     "lint": "react-scripts lint"
+  },
+  "resolutions": {
+    "@types/react": "17.0.14",
+    "@types/react-dom": "17.0.14"
   }
 }

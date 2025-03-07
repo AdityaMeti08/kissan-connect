@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { MapPin, Edit2 } from 'lucide-react';
-import { MapContainer, TileLayer, Marker, Popup, GeoJSON, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css';
 import * as L from 'leaflet';
 import '@geoman-io/leaflet-geoman-free';
-import { auth, db } from "./config/config2.js";
+import { auth, db } from "./config/config.js";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { collection, addDoc, getDocs, updateDoc, doc } from "firebase/firestore";
 // Fix for default marker icon
 import icon from 'leaflet/dist/images/marker-icon.png';
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
-import { GeoJsonTypes } from 'geojson';
-
+import { Feature, FeatureCollection, Geometry } from "geojson";
+import { GeoJSON } from 'react-leaflet';
 let DefaultIcon = L.icon({
   iconUrl: icon,
   shadowUrl: iconShadow,
@@ -297,10 +297,7 @@ function App() {
             <h1 className="ml-2 text-2xl font-bold text-gray-900">Kissan Property Map</h1>
           </div>
           <div>
-            <span className="mr-4">Welcome, {user.email}!</span>
-            <button onClick={handleLogout} className="p-2 bg-red-500 text-white rounded">
-              Logout
-            </button>
+
           </div>
         </div>
       </header>
@@ -308,7 +305,7 @@ function App() {
       <main className="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
         {error && <div className="text-red-500 mb-4">{error}</div>}
         <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-          <div className="h-[70vh] z-0 relative">
+          <div className="h-[70vh] z-0 relative" style={{ height: "500px", width: "100%" }}>
             <MapContainer
               center={[40.7128, -74.0060]}
               zoom={15}
@@ -323,7 +320,7 @@ function App() {
                 <React.Fragment key={property.id}>
                   {property.plot && (
                     <GeoJSON 
-                      data ={property.plot} 
+                      data={property.plot as GeoJSON.Feature} 
                       style={plotStyle}
                       onEachFeature={(feature, layer) => {
                         layer.bindPopup(`
@@ -345,8 +342,8 @@ function App() {
                   )}
                   {property.building && (
                     <GeoJSON 
-                      data={property.building}
-                      style={buildingStyle}
+                    data={property.plot as GeoJSON.Feature} 
+                    style={buildingStyle}
                       onEachFeature={(feature, layer) => {
                         layer.bindPopup(`
                           <div class="p-2">
