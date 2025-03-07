@@ -51,6 +51,7 @@ import {
 } from '@web3auth/solana-provider';
 import {
 	Connection,
+	Keypair,
 	LAMPORTS_PER_SOL,
 	PublicKey,
 	SystemProgram,
@@ -136,14 +137,13 @@ async function mintNFt(){
   console.log("Minting NFT...");
   // Add your minting logic here
   const pubKey = await solanaWallet.requestAccounts();
+  console.log("pubkey",pubKey);
   const { blockhash } = await connection.getLatestBlockhash("finalized");
-  
   const TransactionInstruction = SystemProgram.transfer({
     fromPubkey: new PublicKey(pubKey[0]),
     toPubkey: new PublicKey(pubKey[0]),
     lamports: 0.01 * LAMPORTS_PER_SOL,
   });
-
   const transaction = new Transaction({
     recentBlockhash: blockhash,
     feePayer: new PublicKey(pubKey[0]),
