@@ -6,7 +6,7 @@ This is our final year project for Amrita. As of now, the Main Branch contains t
 The Master Branch contains only one part:
 1) Kissan-Connect
 
-Currently, the Kissan-Connect component in the Master Branch contains the most detailed and complete version of this project.
+Currently, the Kissan-Connect component in the Master Branch contains the most detailed and complete version of this project available on GITHUB.
 
 This serves as an explanation of this project and its documentation.
 
