@@ -1,36 +1,39 @@
-This is our final year project for Amrita. As of now, the Main Branch contains three parts:
+# Final Year Project: Kissan-Connect
+
+## Repository Structure
+As of now, the **Main Branch** contains three components:
 1) Kissan-Connect
-2) Kissan-Connect
-3) Mobileapp
+2) Kissan-Connect (Duplicate Entry)
+3) Mobile App
 
-The Master Branch contains only one part:
+The **Master Branch** contains only one component:
 1) Kissan-Connect
 
-Currently, the Kissan-Connect component in the Master Branch contains the most detailed and complete version of this project available on GITHUB.
+Currently, the **Kissan-Connect** component in the **Master Branch** is the most detailed and complete version of this project available on GitHub.
 
-This serves as an explanation of this project and its documentation.
-
-1) The Aim
+## Project Overview
+### Aim
 In 2020, the Government of India enacted three significant laws:
-1) The Farmers’ Produce Trade and Commerce (Promotion and Facilitation) Ordinance, 2020
-2) The Farmers (Empowerment and Protection) Agreement on Price Assurance and Farm Services Ordinance, 2020
-3) The Essential Commodities (Amendment) Ordinance, 2020
+1) **The Farmers’ Produce Trade and Commerce (Promotion and Facilitation) Ordinance, 2020**
+2) **The Farmers (Empowerment and Protection) Agreement on Price Assurance and Farm Services Ordinance, 2020**
+3) **The Essential Commodities (Amendment) Ordinance, 2020**
 
 These laws collectively aimed to achieve two objectives:
-1) To facilitate direct sales between farmers and companies
-2) To empower farmers by providing access to loans from approved sources, such as banks, rather than middlemen.
+1) Facilitate direct sales between farmers and companies.
+2) Empower farmers by providing access to loans from approved sources, such as banks, rather than relying on middlemen.
 
-Kissan-Connect was conceived with the intention of empowering farmers by providing them with transparency into the calculation of their profits. Farmers would gain insights into the factors that influence crop prices and the final amount they receive.
+**Kissan-Connect** was conceived with the goal of empowering farmers by increasing transparency in profit calculations. This would enable farmers to understand the factors influencing crop prices and the final amount they receive.
 
+## Challenges Encountered
+1) Despite India's high literacy rate, a significant portion of the population lacks technological literacy, particularly in blockchain technology.
+2) Payment transactions needed to be conducted in Indian Rupees.
+3) Non-Fungible Tokens (NFTs) needed to be minted with minimal gas fees.
 
-The challenges we encountered were:
-1) Despite India’s high literacy rate, approximately 3% of the population remains below the poverty line. However, this does not necessarily equate to technological literacy, and a significant portion of the population lacks experience with blockchain technology.
-2) Payment transactions would need to be conducted in Indian rupees.
-3) Non-fungible tokens (NFTs) would need to be minted but with a lower gas cost.
+## Project Decisions
+To address these challenges, we decided on the following implementations:
+1) **Avoiding the use of cryptocurrency wallets** to ensure ease of access for farmers.
+2) **Integrating UPI (Unified Payments Interface)** to facilitate seamless transactions in Indian Rupees.
+3) **Using the Solana network** to enable efficient and cost-effective NFT minting.
 
+This document serves as an explanation and documentation for the Kissan-Connect project.
 
-This equated to 3 things that we decided was not acceptable for the project
-
-1)he Use of wallets.
-2)UPI would be integrated.
-3)We would use the solana network.
