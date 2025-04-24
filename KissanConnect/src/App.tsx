@@ -14,6 +14,7 @@ import {
   Routes,
   Route,
 } from "react-router-dom";
+import Payment from "./pages/payments";
 import Layout from "./pages/Layout";
 import Home from "./pages/Home";
 import Contact from "./pages/Contact";
@@ -317,6 +318,7 @@ function App() {
           <Route path="user" element={<User />} />
           <Route path="/checkout" element={<Checkout />} />  {/* Checkout page */}
           <Route path="/cart" element={<Cart />} />  {/* Cart page */}
+          <Route path="/payment" element={<Payment />} /> {/* Add this route */}
 
         </Route>
       </Routes>
@@ -344,7 +346,6 @@ function App() {
 
   const unloggedInView = (
     <body>
-    <h1 className="center-text">KISK</h1>
     <button  onClick={login} className="card" id="login-btn">
       Login
     </button>

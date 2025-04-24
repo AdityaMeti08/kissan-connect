@@ -21,7 +21,7 @@ const Cart = () => {
               <img src={product.imageUrl} alt={product.productName} />
               <h2>{product.productName}</h2>
               <p>{product.description}</p>
-              <p>Price: ${product.price}</p>
+              <p>Price: ₹{product.price}</p>
               <button onClick={() => handleRemoveFromCart(product.id)}>Remove</button>
             </div>
           ))}

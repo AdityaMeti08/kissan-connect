@@ -66,7 +66,7 @@ const Addproduct = () => {
   };
 
   return (
-    <div>
+    <div className="addproduct">
       <h1>Add a New Product</h1>
 
       {/* Input fields for product info */}
